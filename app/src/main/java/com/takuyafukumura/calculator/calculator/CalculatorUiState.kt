@@ -7,4 +7,5 @@ data class CalculatorUiState(
     val tokens: List<Token> = emptyList(),
     val mode: CalculatorMode = CalculatorMode.INPUT,
     val errorMessage: String? = null,
+    val historyErrorMessage: String? = null,
 )

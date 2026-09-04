@@ -5,7 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.takuyafukumura.calculator.data.dao.CalculationHistoryDao
 import com.takuyafukumura.calculator.data.dao.StringDao
+import com.takuyafukumura.calculator.data.entity.CalculationHistoryEntity
 import com.takuyafukumura.calculator.data.entity.StringEntity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -35,8 +37,8 @@ import kotlinx.coroutines.launch
  * - エクスポートスキーマ: false（開発用設定）
  */
 @Database(
-    entities = [StringEntity::class],
-    version = 1,
+    entities = [StringEntity::class, CalculationHistoryEntity::class],
+    version = 2,
     exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -50,6 +52,8 @@ abstract class AppDatabase : RoomDatabase() {
      */
     abstract fun stringDao(): StringDao
 
+    abstract fun calculationHistoryDao(): CalculationHistoryDao
+
     companion object {
         /**
          * データベースインスタンスのキャッシュ用変数
@@ -60,6 +64,22 @@ abstract class AppDatabase : RoomDatabase() {
          */
         @Volatile
         private var INSTANCE: AppDatabase? = null
+
+        val MIGRATION_1_2 =
+            object : androidx.room.migration.Migration(1, 2) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        """
+                        CREATE TABLE IF NOT EXISTS `calculation_history` (
+                            `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                            `expression` TEXT NOT NULL,
+                            `result` TEXT NOT NULL,
+                            `createdAt` INTEGER NOT NULL
+                        )
+                        """.trimIndent(),
+                    )
+                }
+            }
 
         /**
          * データベースインスタンスを取得する（シングルトンパターン）
@@ -98,7 +118,8 @@ abstract class AppDatabase : RoomDatabase() {
                             context.applicationContext, // アプリケーションコンテキスト
                             AppDatabase::class.java, // データベースクラス
                             "app_database", // データベースファイル名
-                        ).addCallback(AppDatabaseCallback(scope)) // 初期化コールバック追加
+                        ).addMigrations(MIGRATION_1_2)
+                        .addCallback(AppDatabaseCallback(scope)) // 初期化コールバック追加
                         .build()
 
                 // 作成したインスタンスをキャッシュして返す
