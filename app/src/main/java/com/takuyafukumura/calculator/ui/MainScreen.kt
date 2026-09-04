@@ -49,11 +49,11 @@ private fun CalculatorContent(
     onAction: (CalculatorAction) -> Unit,
 ) {
     Column(
-        modifier = modifier.fillMaxSize().navigationBarsPadding().padding(16.dp),
+        modifier = modifier.fillMaxSize().navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth().weight(1f),
+            modifier = Modifier.fillMaxWidth().weight(1f).padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Bottom,
         ) {
@@ -83,13 +83,19 @@ private fun CalculatorContent(
                     },
             )
         }
-        Keypad(onAction = onAction)
+        Keypad(
+            onAction = onAction,
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
     }
 }
 
 @Suppress("FunctionNaming", "LongMethod")
 @Composable
-private fun Keypad(onAction: (CalculatorAction) -> Unit) {
+private fun Keypad(
+    onAction: (CalculatorAction) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val rows =
         listOf(
             listOf(
@@ -143,7 +149,10 @@ private fun Keypad(onAction: (CalculatorAction) -> Unit) {
                 Key("=") { CalculatorAction.EqualsPressed },
             ),
         )
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         rows.forEach { row ->
             Row(
                 modifier = Modifier.fillMaxWidth(),
