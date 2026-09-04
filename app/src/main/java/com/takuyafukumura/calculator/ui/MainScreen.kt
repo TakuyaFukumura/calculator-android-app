@@ -1,152 +1,189 @@
 package com.takuyafukumura.calculator.ui
 
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.takuyafukumura.calculator.R
-import com.takuyafukumura.calculator.data.entity.StringEntity
-import com.takuyafukumura.calculator.ui.components.AddStringForm
-import com.takuyafukumura.calculator.ui.components.DeleteAllConfirmationDialog
-import com.takuyafukumura.calculator.ui.components.DeleteStringConfirmationDialog
-import com.takuyafukumura.calculator.ui.components.GreetingCard
-import com.takuyafukumura.calculator.ui.components.MainOperationStatus
-import com.takuyafukumura.calculator.ui.components.StringListSection
-import com.takuyafukumura.calculator.ui.theme.CalculatorTheme
-import com.takuyafukumura.calculator.ui.viewmodel.MainError
-import com.takuyafukumura.calculator.ui.viewmodel.MainViewModel
+import com.takuyafukumura.calculator.calculator.CalculatorAction
+import com.takuyafukumura.calculator.calculator.CalculatorMode
+import com.takuyafukumura.calculator.calculator.CalculatorUiState
+import com.takuyafukumura.calculator.calculator.CalculatorViewModel
+import com.takuyafukumura.calculator.calculator.Operator
 
-/**
- * メイン画面の状態を収集し、画面全体のComposableを組み立てます。
- *
- * 永続的な状態はViewModelから取得し、入力やダイアログの表示状態だけを画面内で管理します。
- */
+@Suppress("FunctionNaming")
 @Composable
-fun MainScreen(modifier: Modifier = Modifier) {
-    val viewModel: MainViewModel = hiltViewModel()
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val operationStatus =
-        uiState.operationMessage ?: when (uiState.error) {
-            MainError.LOAD_FAILED -> stringResource(R.string.load_error_message)
-            MainError.OPERATION_FAILED -> stringResource(R.string.operation_error_message)
-            MainError.INPUT_BLANK -> stringResource(R.string.input_blank_error)
-            null -> ""
-        }
-
-    var inputText by remember { mutableStateOf("") }
-    var editingId by remember { mutableStateOf<Int?>(null) }
-    var editText by remember { mutableStateOf("") }
-    var showDeleteAllConfirmation by remember { mutableStateOf(false) }
-    var deleteTarget by remember { mutableStateOf<StringEntity?>(null) }
-
-    LaunchedEffect(operationStatus.takeIf { it.isNotEmpty() }) {
-        kotlinx.coroutines.delay(5000)
-        viewModel.clearOperationStatus()
-    }
-
-    Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        GreetingCard(name = uiState.greeting)
-
-        MainOperationStatus(
-            status = operationStatus,
-            error = uiState.error,
-            onRetry = viewModel::retryLoading,
-        )
-
-        AddStringForm(
-            inputText = inputText,
-            isOperationInProgress = uiState.isOperationInProgress,
-            onInputTextChange = { inputText = it },
-            onAdd = { value ->
-                viewModel.addString(value)
-                inputText = ""
-            },
-        )
-
-        StringListSection(
-            strings = uiState.strings,
-            editingId = editingId,
-            editText = editText,
-            onDeleteAll = { showDeleteAllConfirmation = true },
-            onEditStart = { id, currentValue ->
-                editingId = id
-                editText = currentValue
-            },
-            onEditSave = { id ->
-                viewModel.updateString(id, editText)
-                editingId = null
-                editText = ""
-            },
-            onEditCancel = {
-                editingId = null
-                editText = ""
-            },
-            onEditTextChange = { editText = it },
-            onDelete = { entity -> deleteTarget = entity },
-        )
-
-        if (showDeleteAllConfirmation) {
-            DeleteAllConfirmationDialog(
-                onDismiss = { showDeleteAllConfirmation = false },
-                onConfirm = {
-                    showDeleteAllConfirmation = false
-                    viewModel.deleteAllStrings()
-                },
-            )
-        }
-
-        deleteTarget?.let { target ->
-            DeleteStringConfirmationDialog(
-                target = target,
-                onDismiss = { deleteTarget = null },
-                onConfirm = {
-                    viewModel.deleteString(target.id)
-                    deleteTarget = null
-                },
-            )
-        }
-    }
-}
-
-/**
- * 挨拶メッセージを表示するComposable関数。
- */
-@Composable
-fun Greeting(
-    name: String,
+fun MainScreen(
     modifier: Modifier = Modifier,
+    viewModel: CalculatorViewModel = hiltViewModel(),
 ) {
-    androidx.compose.material3.Text(
-        text = stringResource(R.string.greeting_format, name),
-        modifier = modifier,
-    )
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    CalculatorContent(modifier = modifier, state = state, onAction = viewModel::onAction)
 }
 
-/**
- * Greeting Composableのプレビュー用関数。
- */
-@Preview(showBackground = true)
+@Suppress("FunctionNaming")
 @Composable
-fun GreetingPreview() {
-    CalculatorTheme {
-        Greeting("world")
+private fun CalculatorContent(
+    modifier: Modifier,
+    state: CalculatorUiState,
+    onAction: (CalculatorAction) -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().weight(1f),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            Text(
+                text = state.expression,
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                textAlign = TextAlign.End,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+            )
+            Text(
+                text =
+                    if (state.mode == CalculatorMode.ERROR) {
+                        state.errorMessage.orEmpty()
+                    } else {
+                        state.displayValue
+                    },
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                textAlign = TextAlign.End,
+                style = MaterialTheme.typography.displaySmall,
+                maxLines = 1,
+                color =
+                    if (state.mode == CalculatorMode.ERROR) {
+                        MaterialTheme.colorScheme.error
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+            )
+        }
+        Keypad(onAction = onAction)
+    }
+}
+
+@Suppress("FunctionNaming", "LongMethod")
+@Composable
+private fun Keypad(onAction: (CalculatorAction) -> Unit) {
+    val rows =
+        listOf(
+            listOf(
+                Key("AC") {
+                    CalculatorAction.AllClearPressed
+                },
+                Key("DEL") {
+                    CalculatorAction.DeletePressed
+                },
+                Key("%") { CalculatorAction.PercentPressed },
+                Key("÷") { CalculatorAction.OperatorPressed(Operator.DIVIDE) },
+            ),
+            listOf(
+                Key("7") {
+                    CalculatorAction.DigitPressed(7)
+                },
+                Key("8") {
+                    CalculatorAction.DigitPressed(8)
+                },
+                Key("9") { CalculatorAction.DigitPressed(9) },
+                Key("×") { CalculatorAction.OperatorPressed(Operator.MULTIPLY) },
+            ),
+            listOf(
+                Key("4") {
+                    CalculatorAction.DigitPressed(4)
+                },
+                Key("5") {
+                    CalculatorAction.DigitPressed(5)
+                },
+                Key("6") { CalculatorAction.DigitPressed(6) },
+                Key("−") { CalculatorAction.OperatorPressed(Operator.SUBTRACT) },
+            ),
+            listOf(
+                Key("1") {
+                    CalculatorAction.DigitPressed(1)
+                },
+                Key("2") {
+                    CalculatorAction.DigitPressed(2)
+                },
+                Key("3") { CalculatorAction.DigitPressed(3) },
+                Key("+") { CalculatorAction.OperatorPressed(Operator.ADD) },
+            ),
+            listOf(
+                Key("±") {
+                    CalculatorAction.SignTogglePressed
+                },
+                Key("0") {
+                    CalculatorAction.DigitPressed(0)
+                },
+                Key(".") { CalculatorAction.DecimalPressed },
+                Key("=") { CalculatorAction.EqualsPressed },
+            ),
+        )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        rows.forEach { row ->
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                row.forEach { key ->
+                    CalculatorKey(
+                        key = key,
+                        modifier = Modifier.weight(1f),
+                        onClick = { onAction(key.action()) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+private data class Key(
+    val label: String,
+    val action: () -> CalculatorAction,
+)
+
+@Suppress("FunctionNaming")
+@Composable
+private fun CalculatorKey(
+    key: Key,
+    modifier: Modifier,
+    onClick: () -> Unit,
+) {
+    val buttonModifier =
+        modifier.height(56.dp).semantics {
+            contentDescription = key.label
+        }
+    val isOperator = key.label in setOf("÷", "×", "−", "+", "=")
+    if (isOperator) {
+        Button(onClick = onClick, modifier = buttonModifier) {
+            Text(key.label, fontSize = 22.sp)
+        }
+    } else {
+        OutlinedButton(onClick = onClick, modifier = buttonModifier) {
+            Text(key.label, fontSize = 20.sp)
+        }
     }
 }
