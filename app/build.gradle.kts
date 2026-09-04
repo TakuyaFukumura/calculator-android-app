@@ -28,8 +28,8 @@ android {
         applicationId = "com.takuyafukumura.calculator"
         minSdk = 24
         targetSdk = 36
-        versionCode = 3
-        versionName = "0.2.1"
+        versionCode = 5
+        versionName = "0.3.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

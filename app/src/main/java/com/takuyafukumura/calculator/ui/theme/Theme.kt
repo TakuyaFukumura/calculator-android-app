@@ -8,6 +8,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 /**
@@ -21,9 +22,14 @@ import androidx.compose.ui.platform.LocalContext
  */
 private val DarkColorScheme =
     darkColorScheme(
-        primary = Purple80,
+        primary = Color.White,
         secondary = PurpleGrey80,
         tertiary = Pink80,
+        background = Color(0xFF121212),
+        surface = Color(0xFF121212),
+        onPrimary = Color(0xFF1C1B1F),
+        onBackground = Color.White,
+        onSurface = Color.White,
     )
 
 /**
@@ -40,6 +46,10 @@ private val LightColorScheme =
         primary = Purple40,
         secondary = PurpleGrey40,
         tertiary = Pink40,
+        background = Color.White,
+        surface = Color.White,
+        onBackground = Color(0xFF1C1B1F),
+        onSurface = Color(0xFF1C1B1F),
     /*
      * その他のデフォルトカラーのカスタマイズ例（コメントアウト済み）
      *
@@ -72,7 +82,7 @@ private val LightColorScheme =
  * @param dynamicColor Dynamic Color（動的な色）機能を使用するかどうか。
  *                     Android 12以降で、ユーザーの壁紙から抽出した色を
  *                     アプリのテーマに適用する機能です。
- *                     デフォルトはtrue（有効）です。
+ *                     デフォルトはfalse（無効）です。
  *
  * @param content このテーマが適用されるUIコンテンツ。
  *                通常はアプリのメインコンテンツが渡されます。
@@ -80,8 +90,8 @@ private val LightColorScheme =
 @Composable
 fun CalculatorTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color は Android 12以降で利用可能
-    dynamicColor: Boolean = true,
+    // アプリ固有の配色を優先し、端末の壁紙色に左右されないようにする
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     // 使用するカラースキームを決定

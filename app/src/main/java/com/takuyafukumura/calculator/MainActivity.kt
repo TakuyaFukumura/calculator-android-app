@@ -4,7 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.takuyafukumura.calculator.ui.MainScreen
 import com.takuyafukumura.calculator.ui.theme.CalculatorTheme
@@ -28,8 +33,15 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-            CalculatorTheme {
-                MainScreen(modifier = Modifier.fillMaxSize())
+            val systemDarkTheme = isSystemInDarkTheme()
+            var darkTheme by rememberSaveable { mutableStateOf(systemDarkTheme) }
+
+            CalculatorTheme(darkTheme = darkTheme) {
+                MainScreen(
+                    modifier = Modifier.fillMaxSize(),
+                    darkTheme = darkTheme,
+                    onDarkThemeChange = { darkTheme = it },
+                )
             }
         }
     }
