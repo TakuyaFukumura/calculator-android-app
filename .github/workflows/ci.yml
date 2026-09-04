@@ -1,0 +1,120 @@
+# Android CI ワークフロー
+# このワークフローは、Androidアプリのビルドとテストを自動化します。
+
+name: Android CI
+
+permissions:
+  contents: read
+
+# トリガー条件
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - '**/*.gradle.kts'
+      - '**/*.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'settings.gradle.kts'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'gradle/**'
+      - '**/*.gradle.kts'
+      - '**/*.properties'
+      - 'gradlew'
+      - 'gradlew.bat'
+      - 'settings.gradle.kts'
+      - '.github/workflows/ci.yml'
+  workflow_dispatch:
+
+# 並行実行の制御
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ビルドとテストのジョブ
+  build:
+    name: ビルドとテスト
+    runs-on: ubuntu-latest
+    
+    steps:
+      # リポジトリのチェックアウト
+      - name: コードをチェックアウト
+        uses: actions/checkout@v7
+      
+      # Java環境のセットアップ
+      - name: Java 17をセットアップ
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # Android SDKのセットアップ
+      - name: Android SDKをセットアップ
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+
+      # Gradleのセットアップとキャッシュ
+      - name: Gradleをセットアップ
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: false
+      
+      # SDK ライセンスを受諾
+      - name: Android SDKライセンスを受諾
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses || true
+      
+      # 1回のGradle実行で設定・依存関係の解決を共有する
+      - name: フォーマット検査、静的解析、Lint、単体テスト、デバッグビルドを実行
+        run: ./gradlew ktlintCheck detekt lintDebug testDebugUnitTest assembleDebug --build-cache --parallel
+      
+      - name: APKファイルを保存
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 7
+
+      - name: テスト結果を保存
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: |
+            app/build/test-results/
+            app/build/reports/tests/
+            app/build/reports/lint-results/
+          retention-days: 7
+
+  instrumentation:
+    name: インストルメンテーションテスト
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: コードをチェックアウト
+        uses: actions/checkout@v7
+      - name: Java 17をセットアップ
+        uses: actions/setup-java@v6
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+      - name: Android SDKをセットアップ
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools platforms;android-36 build-tools;36.0.0'
+      - name: Gradleをセットアップ
+        uses: gradle/actions/setup-gradle@v6
+      - name: インストルメンテーションテストを実行
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          arch: x86_64
+          profile: pixel_2
+          script: ./gradlew connectedAndroidTest --no-daemon

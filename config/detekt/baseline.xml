@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>FunctionNaming:MainScreen.kt$@Composable fun Greeting( name: String, modifier: Modifier = Modifier, )</ID>
+    <ID>FunctionNaming:MainScreen.kt$@Composable fun MainScreen(modifier: Modifier = Modifier)</ID>
+    <ID>FunctionNaming:MainScreen.kt$@Preview(showBackground = true) @Composable fun GreetingPreview()</ID>
+    <ID>FunctionNaming:MainScreenComponents.kt$@Composable fun AddStringForm( inputText: String, isOperationInProgress: Boolean, onInputTextChange: (String) -&gt; Unit, onAdd: (String) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MainScreenComponents.kt$@Composable fun DeleteAllConfirmationDialog( onDismiss: () -&gt; Unit, onConfirm: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MainScreenComponents.kt$@Composable fun DeleteStringConfirmationDialog( target: StringEntity, onDismiss: () -&gt; Unit, onConfirm: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MainScreenComponents.kt$@Composable fun GreetingCard(name: String)</ID>
+    <ID>FunctionNaming:MainScreenComponents.kt$@Composable fun MainOperationStatus( status: String, error: MainError?, onRetry: () -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MainScreenComponents.kt$@Composable fun StringListItem( stringEntity: StringEntity, editingId: Int?, editText: String, onEditStart: (Int, String) -&gt; Unit, onEditSave: (Int) -&gt; Unit, onEditCancel: () -&gt; Unit, onEditTextChange: (String) -&gt; Unit, onDelete: (StringEntity) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:MainScreenComponents.kt$@Composable fun StringListSection( strings: List&lt;StringEntity&gt;, editingId: Int?, editText: String, onDeleteAll: () -&gt; Unit, onEditStart: (Int, String) -&gt; Unit, onEditSave: (Int) -&gt; Unit, onEditCancel: () -&gt; Unit, onEditTextChange: (String) -&gt; Unit, onDelete: (StringEntity) -&gt; Unit, )</ID>
+    <ID>FunctionNaming:Theme.kt$@Composable fun MyApplicationTheme( darkTheme: Boolean = isSystemInDarkTheme(), // Dynamic color は Android 12以降で利用可能 dynamicColor: Boolean = true, content: @Composable () -&gt; Unit, )</ID>
+    <ID>LongMethod:MainScreen.kt$@Composable fun MainScreen(modifier: Modifier = Modifier)</ID>
+    <ID>LongMethod:MainScreenComponents.kt$@Composable fun AddStringForm( inputText: String, isOperationInProgress: Boolean, onInputTextChange: (String) -&gt; Unit, onAdd: (String) -&gt; Unit, )</ID>
+    <ID>LongMethod:MainScreenComponents.kt$@Composable fun StringListItem( stringEntity: StringEntity, editingId: Int?, editText: String, onEditStart: (Int, String) -&gt; Unit, onEditSave: (Int) -&gt; Unit, onEditCancel: () -&gt; Unit, onEditTextChange: (String) -&gt; Unit, onDelete: (StringEntity) -&gt; Unit, )</ID>
+    <ID>LongParameterList:MainScreenComponents.kt$( stringEntity: StringEntity, editingId: Int?, editText: String, onEditStart: (Int, String) -&gt; Unit, onEditSave: (Int) -&gt; Unit, onEditCancel: () -&gt; Unit, onEditTextChange: (String) -&gt; Unit, onDelete: (StringEntity) -&gt; Unit, )</ID>
+    <ID>LongParameterList:MainScreenComponents.kt$( strings: List&lt;StringEntity&gt;, editingId: Int?, editText: String, onDeleteAll: () -&gt; Unit, onEditStart: (Int, String) -&gt; Unit, onEditSave: (Int) -&gt; Unit, onEditCancel: () -&gt; Unit, onEditTextChange: (String) -&gt; Unit, onDelete: (StringEntity) -&gt; Unit, )</ID>
+    <ID>TooGenericExceptionCaught:MainViewModel.kt$MainViewModel$exception: Exception</ID>
+  </CurrentIssues>
+</SmellBaseline>
