@@ -76,14 +76,14 @@ jobs:
         run: ./gradlew ktlintCheck detekt lintDebug testDebugUnitTest assembleDebug --build-cache --parallel
       
       - name: APKファイルを保存
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: debug-apk
           path: app/build/outputs/apk/debug/*.apk
           retention-days: 7
 
       - name: テスト結果を保存
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: test-results
