@@ -1,10 +1,10 @@
-# basic-android-app
+# calculator-android-app
 
-[![Android CI](https://github.com/TakuyaFukumura/basic-android-app/workflows/Android%20CI/badge.svg)](https://github.com/TakuyaFukumura/basic-android-app/actions/workflows/ci.yml)
+[![Android CI](https://github.com/TakuyaFukumura/calculator-android-app/workflows/Android%20CI/badge.svg)](https://github.com/TakuyaFukumura/calculator-android-app/actions/workflows/ci.yml)
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Android API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
 [![Target SDK](https://img.shields.io/badge/Target%20SDK-36-orange.svg?style=flat)](https://developer.android.com/studio/releases/platforms)
-[![Version](https://img.shields.io/badge/Version-0.11.0-blue.svg?style=flat)](https://github.com/TakuyaFukumura/basic-android-app/releases)
+[![Version](https://img.shields.io/badge/Version-0.1.0-blue.svg?style=flat)](https://github.com/TakuyaFukumura/calculator-android-app/releases)
 
 KotlinとJetpack Composeで構築されたモダンなAndroidアプリケーション。文字列データベース管理機能を持つCRUDアプリケーションのサンプルです。
 
@@ -59,8 +59,8 @@ KotlinとJetpack Composeで構築されたモダンなAndroidアプリケーシ�
 
 ### 1. プロジェクトのクローン
 ```bash
-git clone https://github.com/TakuyaFukumura/basic-android-app.git
-cd basic-android-app
+git clone https://github.com/TakuyaFukumura/calculator-android-app.git
+cd calculator-android-app
 ```
 
 ### 2. ビルドと実行
@@ -121,12 +121,6 @@ Pull Requestでは、GitHub Dependency Reviewが依存関係の変更を検査�
 5. `.github/workflows/ci.yml`、Dependabot、署名Secretsを派生アプリの運用に合わせる
 6. `assembleDebug`、`testDebugUnitTest`、`lintDebug`、必要に応じて `connectedAndroidTest` を実行する
 
-詳細な改善候補と設計上の注意点は [`docs/改善点.md`](docs/改善点.md) を参照してください。
-
-アーキテクチャ、データフロー、検証コマンドは [`docs/architecture.md`](docs/architecture.md) にまとめています。`docs/` の文書を変更した場合はREADMEからの導線も更新してください。
-
-Releaseビルド、署名、公開前チェックは [`docs/release.md`](docs/release.md) を参照してください。
-
 ### トラブルシューティング
 
 - 初回ビルドでネットワークエラーが発生する場合は、インターネット接続を確認してください
@@ -156,7 +150,7 @@ GitHub Actionsを使用した自動化されたビルドパイプラインが設
 ```
 app/src/main/java/com/example/myapplication/
 ├── MainActivity.kt              # メインアクティビティ（Hilt対応）
-├── MyApplication.kt             # アプリケーションクラス（Hilt対応）
+├── CalculatorApplication.kt     # アプリケーションクラス（Hilt対応）
 ├── data/                        # データレイヤー
 │   ├── entity/
 │   │   └── StringEntity.kt      # データベースエンティティ
@@ -179,15 +173,4 @@ app/src/main/java/com/example/myapplication/
 
 ## バージョン履歴
 
-- **v0.11.0**: 画面上のSwitchによるダークモード切り替えを追加
-- **v0.10.1**: Kotlinフォーマットと静的解析をCI品質ゲートへ追加
-- **v0.10.0**: Dependency Reviewによる脆弱性検出と依存関係更新時のCI検証を追加
-- **v0.7.0**: Hilt依存関係注入の導入、CRUD機能の完全実装、Kotlin 2.2.20への更新
-- **v0.8.0**: 型付きUI状態、Repository抽象化、ViewModelテスト、CI品質ゲートを追加
-- **v0.9.0**: 再試行可能なエラー表示、入力境界値、非破壊な初期データ投入、アクセシビリティ改善を追加
-- **v0.9.1**: MainScreenのComposableを責務ごとに分割し、UIテストの参照構成を整理
-- **v0.6.0**: Android Gradle Plugin 8.12.2への更新、依存関係最新化
-- **v0.5.0**: CI/CDワークフローの改善（gradle/actions/setup-gradle@v4導入）
-- **v0.3.0**: Roomデータベース統合、MVVM+Repository パターンの実装
-- **v0.2.0**: Java 17への移行、最新依存関係への更新
-- **v0.1.0**: 初期バージョン（Java 11ベース）
+- **v0.1.0**: Calculatorアプリの初期設定

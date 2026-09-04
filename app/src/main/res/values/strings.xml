@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">My Application</string>
-    <string name="greeting_format">Hello %1$s!</string>
+    <string name="app_name">Calculator</string>
+    <string name="greeting_format">Calculator: %1$s</string>
     <string name="add_string_title">新しい文字列を追加</string>
     <string name="string_input_label">文字列を入力</string>
     <string name="add">追加</string>

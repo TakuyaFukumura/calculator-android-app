@@ -20,7 +20,7 @@ Android SDKの場所は、リポジトリ直下の `local.properties` にある 
 3. PowerShellまたはコマンドプロンプトで、リポジトリのルートへ移動します。
 
    ```powershell
-   cd C:\path\to\basic-android-app
+   cd C:\path\to\calculator-android-app
    ```
 
 4. スクリプトを実行します。
@@ -34,7 +34,7 @@ Android SDKの場所は、リポジトリ直下の `local.properties` にある 
 1. ADBサーバーを起動します。
 2. 接続状態が `device` の端末を確認します。
 3. `gradlew.bat installDebug` でデバッグ版APKをビルドしてインストールします。
-4. `com.example.myapplication` を起動します。
+4. `com.takuyafukumura.calculator` を起動します。
 
 処理が成功すると、`インストールと起動が完了しました。` と表示されます。終了するには、表示されたプロンプトで任意のキーを押します。
 

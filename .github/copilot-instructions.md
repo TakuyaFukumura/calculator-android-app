@@ -48,7 +48,7 @@ export PATH=$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/tools
 # 接続されたデバイス/エミュレーターにデバッグAPKをインストール
 ./gradlew installDebug
 # アプリをアンインストール
-adb uninstall com.example.myapplication
+adb uninstall com.takuyafukumura.calculator
 ```
 
 ### 既知の問題と制限事項
@@ -109,7 +109,7 @@ adb uninstall com.example.myapplication
 
 ### 主要ディレクトリとファイル
 ```
-basic-android-app/
+calculator-android-app/
 ├── app/                           # メインアプリケーションモジュール
 │   ├── src/main/
 │   │   ├── java/com/example/myapplication/
@@ -160,8 +160,8 @@ basic-android-app/
 - **Target SDK:** 36 (Android API level 36)
 - **Min SDK:** 24 (Android 7.0)
 - **Java互換性:** Java 17 (環境で利用可能)
-- **パッケージ名:** com.example.myapplication
-- **バージョン:** 0.7.0 (versionCode 2)
+- **パッケージ名:** com.takuyafukumura.calculator
+- **バージョン:** 0.1.0 (versionCode 1)
 
 ### 現在の依存関係 (libs.versions.toml より)
 - androidx-core-ktx: 1.17.0
