@@ -43,8 +43,8 @@ try {
         throw "installDebug に失敗しました。"
     }
 
-    & $adb shell am force-stop com.example.myapplication
-    & $adb shell monkey -p com.example.myapplication 1
+    & $adb shell am force-stop com.takuyafukumura.calculator
+    & $adb shell monkey -p com.takuyafukumura.calculator 1
     if ($LASTEXITCODE -ne 0) {
         throw "アプリの起動に失敗しました。"
     }

@@ -7,7 +7,7 @@ description: このリポジトリの Android アプリをエミュレーター�
 
 ## 対象アプリ
 
-- パッケージ名: `com.example.myapplication`
+- パッケージ名: `com.takuyafukumura.calculator`
 - 起動 Activity: `.MainActivity`
 - Debug APK: `app/build/outputs/apk/debug/app-debug.apk`
 - 最小 SDK: 24、Target SDK: 36
@@ -64,8 +64,8 @@ Start-Process $emulator -ArgumentList "-avd", "Medium_Phone_API_36.0", "-no-boot
 ## アプリ起動
 
 ```powershell
-& $adb shell am force-stop com.example.myapplication
-& $adb shell monkey -p com.example.myapplication 1
+& $adb shell am force-stop com.takuyafukumura.calculator
+& $adb shell monkey -p com.takuyafukumura.calculator 1
 ```
 
 前面 Activity を確認する。
@@ -74,7 +74,7 @@ Start-Process $emulator -ArgumentList "-avd", "Medium_Phone_API_36.0", "-no-boot
 & $adb shell dumpsys activity activities | Select-String "mResumedActivity|topResumedActivity"
 ```
 
-`com.example.myapplication/.MainActivity` が表示されれば起動確認完了。
+`com.takuyafukumura.calculator/.MainActivity` が表示されれば起動確認完了。
 
 ## 手動確認シナリオ
 
