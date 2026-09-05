@@ -4,7 +4,7 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-2.2.20-blue.svg?style=flat&logo=kotlin)](https://kotlinlang.org)
 [![Android API](https://img.shields.io/badge/API-24%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=24)
 [![Target SDK](https://img.shields.io/badge/Target%20SDK-36-orange.svg?style=flat)](https://developer.android.com/studio/releases/platforms)
-[![Version](https://img.shields.io/badge/Version-0.3.0-blue.svg?style=flat)](https://github.com/TakuyaFukumura/calculator-android-app/releases)
+[![Version](https://img.shields.io/badge/Version-0.4.0-blue.svg?style=flat)](https://github.com/TakuyaFukumura/calculator-android-app/releases)
 
 KotlinとJetpack Composeで構築されたモダンなAndroidアプリケーション。文字列データベース管理機能を持つCRUDアプリケーションのサンプルです。
 
@@ -175,5 +175,6 @@ app/src/main/java/com/example/myapplication/
 
 - **v0.2.1**: 電卓ボタンをAndroidのナビゲーションバーと干渉しない位置に調整
 - **v0.3.0**: 画面右上にダークモード切り替えトグルを追加
+- **v0.4.0**: 計算履歴の保存、表示、再利用、削除に対応
 - **v0.2.0**: 四則演算、入力補助操作、エラー処理を備えた電卓MVPを実装
 - **v0.1.0**: Calculatorアプリの初期設定

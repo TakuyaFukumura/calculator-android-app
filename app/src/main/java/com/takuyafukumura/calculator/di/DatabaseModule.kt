@@ -1,8 +1,11 @@
 package com.takuyafukumura.calculator.di
 
 import android.content.Context
+import com.takuyafukumura.calculator.data.dao.CalculationHistoryDao
 import com.takuyafukumura.calculator.data.dao.StringDao
 import com.takuyafukumura.calculator.data.database.AppDatabase
+import com.takuyafukumura.calculator.data.repository.CalculationHistoryRepository
+import com.takuyafukumura.calculator.data.repository.RoomCalculationHistoryRepository
 import com.takuyafukumura.calculator.data.repository.RoomStringRepository
 import com.takuyafukumura.calculator.data.repository.StringRepository
 import dagger.Module
@@ -87,6 +90,9 @@ object DatabaseModule {
     @Provides
     fun provideStringDao(database: AppDatabase): StringDao = database.stringDao()
 
+    @Provides
+    fun provideCalculationHistoryDao(database: AppDatabase): CalculationHistoryDao = database.calculationHistoryDao()
+
     /**
      * StringRepositoryインスタンスを提供
      *
@@ -98,6 +104,10 @@ object DatabaseModule {
      */
     @Provides
     fun provideStringRepository(stringDao: StringDao): StringRepository = RoomStringRepository(stringDao)
+
+    @Provides
+    fun provideCalculationHistoryRepository(dao: CalculationHistoryDao): CalculationHistoryRepository =
+        RoomCalculationHistoryRepository(dao)
 
     @Provides
     @Singleton

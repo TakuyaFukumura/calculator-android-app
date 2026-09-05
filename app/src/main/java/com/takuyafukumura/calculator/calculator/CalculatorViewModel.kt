@@ -1,10 +1,16 @@
 package com.takuyafukumura.calculator.calculator
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.takuyafukumura.calculator.data.entity.CalculationHistoryEntity
+import com.takuyafukumura.calculator.data.repository.CalculationHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.launch
 import java.math.BigDecimal
 import javax.inject.Inject
 
@@ -14,7 +20,10 @@ class CalculatorViewModel
     @Inject
     constructor(
         private val engine: CalculatorEngine,
+        private val historyRepository: CalculationHistoryRepository,
     ) : ViewModel() {
+        constructor(engine: CalculatorEngine) : this(engine, NoOpCalculationHistoryRepository)
+
         private val _uiState = MutableStateFlow(CalculatorUiState())
         val uiState: StateFlow<CalculatorUiState> = _uiState.asStateFlow()
 
@@ -113,8 +122,22 @@ class CalculatorViewModel
                             tokens = emptyList(),
                             mode = CalculatorMode.RESULT,
                             errorMessage = null,
+                            historyErrorMessage = null,
                         ),
                     )
+                    viewModelScope.launch {
+                        runCatching {
+                            historyRepository.save(
+                                expression = expressionFor(tokens, ""),
+                                result = formatted,
+                            )
+                        }.onFailure {
+                            _uiState.value =
+                                _uiState.value.copy(
+                                    historyErrorMessage = "計算履歴の保存に失敗しました",
+                                )
+                        }
+                    }
                 }.onFailure { exception ->
                     val message =
                         if (exception is CalculatorException.DivisionByZero) {
@@ -175,8 +198,88 @@ class CalculatorViewModel
             _uiState.value = state
         }
 
+        @Suppress("ReturnCount")
+        fun restoreExpression(expression: String): Boolean {
+            val parsedTokens = parseExpression(expression) ?: return false
+            val lastNumber = parsedTokens.lastOrNull() as? Token.Number ?: return false
+            val precedingTokens = parsedTokens.dropLast(1)
+            val input = CalculatorFormatter.format(lastNumber.value)
+            update(
+                CalculatorUiState(
+                    expression = expressionFor(precedingTokens, input),
+                    displayValue = input,
+                    input = input,
+                    tokens = precedingTokens,
+                ),
+            )
+            return true
+        }
+
+        @Suppress("CyclomaticComplexMethod", "NestedBlockDepth", "ReturnCount")
+        private fun parseExpression(expression: String): List<Token>? {
+            val tokens = mutableListOf<Token>()
+            var index = 0
+            while (index < expression.length) {
+                while (index < expression.length && expression[index].isWhitespace()) index++
+                if (index >= expression.length) break
+
+                val startsNegative =
+                    expression[index] == '-' &&
+                        (tokens.isEmpty() || tokens.last() is Token.OperatorToken)
+                if (expression[index].isDigit() || expression[index] == '.' || startsNegative) {
+                    val start = index
+                    if (startsNegative) index++
+                    var hasDigit = false
+                    var hasDecimal = false
+                    while (index < expression.length) {
+                        val character = expression[index]
+                        when {
+                            character.isDigit() -> {
+                                hasDigit = true
+                                index++
+                            }
+                            character == '.' && !hasDecimal -> {
+                                hasDecimal = true
+                                index++
+                            }
+                            else -> break
+                        }
+                    }
+                    if (!hasDigit) return null
+                    val number = expression.substring(start, index).toBigDecimalOrNull() ?: return null
+                    tokens += Token.Number(number)
+                } else {
+                    val operator =
+                        when (expression[index]) {
+                            '+' -> Operator.ADD
+                            '−' -> Operator.SUBTRACT
+                            '×' -> Operator.MULTIPLY
+                            '÷' -> Operator.DIVIDE
+                            else -> return null
+                        }
+                    tokens += Token.OperatorToken(operator)
+                    index++
+                }
+            }
+            return tokens.takeIf { it.isNotEmpty() && it.last() is Token.Number && it.size % 2 == 1 }
+        }
+
         private fun shouldAppendCurrentNumber(
             tokens: List<Token>,
             input: String,
         ): Boolean = tokens.isEmpty() || (tokens.last() is Token.OperatorToken && input != "0")
+
+        private object NoOpCalculationHistoryRepository : CalculationHistoryRepository {
+            override fun observeHistory(): Flow<List<CalculationHistoryEntity>> = emptyFlow()
+
+            override suspend fun save(
+                expression: String,
+                result: String,
+                createdAt: Long,
+            ) = Unit
+
+            override suspend fun delete(id: Long) = Unit
+
+            override suspend fun deleteAll() = Unit
+        }
     }
