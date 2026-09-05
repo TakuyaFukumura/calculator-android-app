@@ -33,7 +33,11 @@ class CalculationHistoryRepositoryTest {
 private class FakeCalculationHistoryDao : CalculationHistoryDao {
     private val state = MutableStateFlow<List<CalculationHistoryEntity>>(emptyList())
     val entries: List<CalculationHistoryEntity>
-        get() = state.value.sortedWith(compareByDescending<CalculationHistoryEntity> { it.createdAt }.thenByDescending { it.id })
+        get() =
+            state.value.sortedWith(
+                compareByDescending<CalculationHistoryEntity> { it.createdAt }
+                    .thenByDescending { it.id },
+            )
 
     override fun observeHistory(): Flow<List<CalculationHistoryEntity>> = state
 

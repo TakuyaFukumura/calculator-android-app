@@ -106,8 +106,8 @@ object DatabaseModule {
     fun provideStringRepository(stringDao: StringDao): StringRepository = RoomStringRepository(stringDao)
 
     @Provides
-    fun provideCalculationHistoryRepository(calculationHistoryDao: CalculationHistoryDao): CalculationHistoryRepository =
-        RoomCalculationHistoryRepository(calculationHistoryDao)
+    fun provideCalculationHistoryRepository(dao: CalculationHistoryDao): CalculationHistoryRepository =
+        RoomCalculationHistoryRepository(dao)
 
     @Provides
     @Singleton

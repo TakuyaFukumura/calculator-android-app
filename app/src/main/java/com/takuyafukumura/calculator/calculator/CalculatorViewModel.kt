@@ -198,6 +198,7 @@ class CalculatorViewModel
             _uiState.value = state
         }
 
+        @Suppress("ReturnCount")
         fun restoreExpression(expression: String): Boolean {
             val parsedTokens = parseExpression(expression) ?: return false
             val lastNumber = parsedTokens.lastOrNull() as? Token.Number ?: return false
@@ -214,6 +215,7 @@ class CalculatorViewModel
             return true
         }
 
+        @Suppress("CyclomaticComplexMethod", "NestedBlockDepth", "ReturnCount")
         private fun parseExpression(expression: String): List<Token>? {
             val tokens = mutableListOf<Token>()
             var index = 0

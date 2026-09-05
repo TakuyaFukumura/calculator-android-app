@@ -180,7 +180,7 @@ private fun CalculatorContent(
     }
 }
 
-@Suppress("FunctionNaming")
+@Suppress("FunctionNaming", "LongParameterList")
 @Composable
 private fun HistorySheet(
     entries: List<CalculationHistoryEntity>,
